@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+}
+
+@layer base {
+  body {
+    background-color: #E0E7FF;
+    color: var(--color-gray-900, #111827);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@media print {
+
+  .no-print,
+  header,
+  aside,
+  aside+div>header,
+  .flex.h-screen>div:first-child {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .max-w-7xl {
+    max-width: none !important;
+    width: 100% !important;
+  }
+}
+
+/* Responsive Utilities */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Make tables more usable on mobile by hinting at scroll */
+  .table-responsive-container {
+    overflow-x: auto;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  
+  /* Shared responsive padding */
+  .dashboard-container {
+    @apply p-4 sm:p-6 lg:p-8 xl:p-10;
+  }
+
+  /* Grid for cards that stacks on mobile */
+  .card-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+}
+
+/* Custom Scrollbar for desktop */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

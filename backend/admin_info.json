@@ -1,0 +1,11 @@
+{
+  "rawPassword": "",
+  "_id": "69ac86ea74376d59d4aedbe2",
+  "name": "Admin User",
+  "email": "admin@school.com",
+  "password": "$2b$10$nTD3nNte7NCLYT380hQWPOxlFzZjPXPyHRTHZiXcLpHz.7acyj/3W",
+  "role": "admin",
+  "createdAt": "2026-03-07T20:13:30.785Z",
+  "updatedAt": "2026-03-07T20:13:30.785Z",
+  "__v": 0
+}
