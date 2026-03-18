@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, GraduationCap, User, Lock, UserPlus, LogIn, ChevronRight, Mail } from 'lucide-react';
+import { Loader2, GraduationCap, User, Lock, UserPlus, LogIn, ChevronRight, Mail, X } from 'lucide-react';
 
 const Login = () => {
     // Branding State
@@ -88,155 +88,122 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] p-4 font-sans">
-            <div className="w-full max-w-[480px]">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#364251] p-4 font-sans">
+            <div className="w-full max-w-[420px]">
                 {/* ── Auth Card ────────────────────────────────────────────────────── */}
-                <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 sm:p-12 flex flex-col items-center border border-gray-100 relative overflow-hidden">
+                <div className="bg-[#f4f5f7] shadow-lg p-10 flex flex-col items-center">
                     
-                    {/* Decorative Background Elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-green-50 rounded-full -ml-12 -mb-12 opacity-50"></div>
-
                     {/* Logo Section */}
-                    <div className="mb-6 relative z-10">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center bg-white rounded-3xl shadow-xl border border-gray-100 p-4 transform hover:rotate-3 transition-transform duration-300">
-                            {branding.logo ? (
-                                <img src={branding.logo} alt="School Logo" className="w-full h-full object-contain" />
-                            ) : (
-                                <GraduationCap className="w-16 h-16 text-blue-600" />
-                            )}
-                        </div>
+                    <div className="mb-6 w-full flex flex-col items-center">
+                        {branding.logo ? (
+                            <img src={branding.logo} alt="School Logo" className="w-[180px] h-auto object-contain mix-blend-multiply" />
+                        ) : (
+                            <h1 className="text-3xl font-black text-[#1e88e5] tracking-tight uppercase text-center mb-2">
+                                {branding.schoolName}
+                            </h1>
+                        )}
                     </div>
 
-                    {/* School Name */}
-                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 tracking-tight text-center uppercase relative z-10 transition-all duration-300">
-                        {isRegistering ? 'Ku Biir Nidaamka' : branding.schoolName}
-                    </h1>
-
-                    <p className="text-gray-500 mb-8 text-center font-medium relative z-10">
-                        {isRegistering ? 'Fadlan buuxi macluumaadka si aad u samaysato account.' : 'Welcome back! Please enter your details.'}
+                    {/* Subtitle */}
+                    <p className="text-gray-900 mb-6 text-center font-bold text-[15px]">
+                        {isRegistering ? 'Please fill out all fields.' : 'Please sign in to get access.'}
                     </p>
 
                     {/* Form Section */}
-                    <form onSubmit={handleSubmit} className="w-full space-y-4 relative z-10">
+                    <form onSubmit={handleSubmit} className="w-full space-y-3">
                         {error && (
-                            <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-sm text-red-600 text-center font-bold animate-shake">
+                            <div className="p-3 bg-red-50 border border-red-200 text-sm text-red-600 text-center font-semibold">
                                 {error}
                             </div>
                         )}
 
                         {isRegistering && (
                             <>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <User className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
-                                        placeholder="Magaca oo buuxa"
-                                    />
-                                </div>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <UserPlus className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                                    </div>
-                                    <select
-                                        value={role}
-                                        onChange={(e) => setRole(e.target.value)}
-                                        className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold appearance-none"
-                                    >
-                                        <option value="student">Arday</option>
-                                        <option value="teacher">Macalin</option>
-                                        <option value="parent">Wali</option>
-                                    </select>
-                                </div>
+                                <input
+                                    type="text"
+                                    required
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="block w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#2185d0] transition-colors"
+                                    placeholder="Full Name"
+                                />
+                                <select
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    className="block w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#2185d0] transition-colors"
+                                >
+                                    <option value="student">Arday</option>
+                                    <option value="teacher">Macalin</option>
+                                    <option value="admin">Maamulka</option>
+                                </select>
                             </>
                         )}
 
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                            </div>
-                            <input
-                                type="text"
-                                required
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
-                                placeholder="Username ama Email"
-                            />
-                        </div>
+                        <input
+                            type="text"
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="block w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#2185d0] transition-colors"
+                            placeholder="Username ama Email"
+                        />
 
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                            </div>
+                        <input
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="block w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#2185d0] transition-colors"
+                            placeholder="Password"
+                        />
+
+                        {isRegistering && (
                             <input
                                 type="password"
                                 required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
-                                placeholder="Password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="block w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm text-gray-800 focus:bg-white focus:outline-none focus:border-[#2185d0] transition-colors"
+                                placeholder="Confirm Password"
                             />
-                        </div>
+                        )}
 
-                        {isRegistering && (
-                            <div className="relative group animate-in fade-in slide-in-from-top-2 duration-300">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                                </div>
-                                <input
-                                    type="password"
-                                    required
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
-                                    placeholder="Confirm Password"
-                                />
+                        {!isRegistering && (
+                            <div className="flex justify-end pt-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForgot(true)}
+                                    className="text-[12px] text-gray-500 hover:text-[#2185d0] font-medium transition-colors"
+                                >
+                                    Lost your password?
+                                </button>
                             </div>
                         )}
 
-                        <div className="flex justify-between items-center pt-1">
+                        <div className="pt-2">
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full h-10 bg-[#2185d0] hover:bg-[#1678c2] text-white text-[15px] font-bold transition-all flex items-center justify-center disabled:opacity-50"
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    isRegistering ? 'Register' : 'Log in'
+                                )}
+                            </button>
+                        </div>
+                        
+                        <div className="pt-3 text-center">
                             <button
                                 type="button"
                                 onClick={() => {
                                     setIsRegistering(!isRegistering);
                                     setError('');
                                 }}
-                                className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4"
+                                className="text-xs text-gray-500 hover:text-[#2185d0] transition-colors"
                             >
-                                {isRegistering ? 'Account miyaad leedahay? Login' : 'Account ma u baahan tahay? Register'}
-                            </button>
-                            {!isRegistering && (
-                                <button
-                                    type="button"
-                                    onClick={() => setShowForgot(true)}
-                                    className="text-sm font-bold text-gray-400 hover:text-blue-600 transition-all"
-                                >
-                                    Lost your password?
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="pt-4">
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="group relative w-full h-[65px] bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-lg font-bold transition-all duration-300 flex items-center justify-center disabled:opacity-50 shadow-[0_10px_25px_rgba(37,99,235,0.25)]"
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="w-6 h-6 animate-spin" />
-                                ) : (
-                                    <>
-                                        {isRegistering ? 'Sign Up Now' : 'Sign In'}
-                                        <LogIn className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </>
-                                )}
+                                {isRegistering ? 'Account miyaad leedahay? Log in' : 'Account ma u baahan tahay? Register'}
                             </button>
                         </div>
                     </form>
@@ -245,67 +212,55 @@ const Login = () => {
 
             {/* ── Forgot Password Modal ─────────────────── */}
             {showForgot && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md transition-all duration-300">
-                    <div className="relative w-full max-w-[440px] bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-2xl border border-gray-100 animate-in fade-in zoom-in duration-300">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm transition-all duration-300">
+                    <div className="relative w-full max-w-sm bg-[#f4f5f7] p-8 shadow-2xl animate-in fade-in zoom-in duration-300">
                         <button 
                             onClick={() => setShowForgot(false)}
-                            className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+                            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-all"
                         >
-                            <ChevronRight className="w-5 h-5 rotate-180" />
+                            <X className="w-5 h-5" />
                         </button>
 
-                        <div className="text-center mb-8">
-                            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Lock className="w-8 h-8" />
-                            </div>
-                            <h3 className="text-2xl font-black text-gray-900 capitalize">Password-ka ma ilaawday?</h3>
-                            <p className="text-gray-500 mt-2 font-medium">Fadlan nala soo xiriir si aan kuu caawino.</p>
+                        <div className="text-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-900">Reset Password</h3>
+                            <p className="text-sm text-gray-600 mt-2">Buuxi foomka si aan kuu caawino.</p>
                         </div>
 
                         {forgotSuccess ? (
-                            <div className="p-6 rounded-2xl bg-green-50 text-green-700 text-sm font-bold text-center border border-green-100">
+                            <div className="p-4 bg-green-50 text-green-700 text-sm font-bold text-center border border-green-200">
                                 {forgotSuccess}
                             </div>
                         ) : (
-                            <form onSubmit={handleForgotSubmit} className="space-y-4">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Magaca oo buuxa</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={forgotFullName}
-                                        onChange={(e) => setForgotFullName(e.target.value)}
-                                        className="w-full h-[56px] px-5 bg-gray-50 border border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-blue-400 transition-all outline-none"
-                                        placeholder="Tusaale: Maxamed Cali"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Username-kaaga</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={forgotUsername}
-                                        onChange={(e) => setForgotUsername(e.target.value)}
-                                        className="w-full h-[56px] px-5 bg-gray-50 border border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-blue-400 transition-all outline-none"
-                                        placeholder="Tusaale: maxamed123"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-wider">Fariintaada</label>
-                                    <textarea
-                                        required
-                                        value={forgotMessage}
-                                        onChange={(e) => setForgotMessage(e.target.value)}
-                                        className="w-full h-[120px] px-5 py-4 bg-gray-50 border border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:border-blue-400 transition-all outline-none resize-none"
-                                        placeholder="Sharaxaad kooban ka bixi codsigaaga..."
-                                    />
-                                </div>
+                            <form onSubmit={handleForgotSubmit} className="space-y-3">
+                                <input
+                                    type="text"
+                                    required
+                                    value={forgotFullName}
+                                    onChange={(e) => setForgotFullName(e.target.value)}
+                                    className="w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm focus:bg-white focus:outline-none focus:border-[#2185d0] transition-all"
+                                    placeholder="Magaca oo buuxa"
+                                />
+                                <input
+                                    type="text"
+                                    required
+                                    value={forgotUsername}
+                                    onChange={(e) => setForgotUsername(e.target.value)}
+                                    className="w-full h-10 px-3 bg-[#ebf0f5] border border-gray-300 text-sm focus:bg-white focus:outline-none focus:border-[#2185d0] transition-all"
+                                    placeholder="Username-kaaga"
+                                />
+                                <textarea
+                                    required
+                                    value={forgotMessage}
+                                    onChange={(e) => setForgotMessage(e.target.value)}
+                                    className="w-full h-24 px-3 py-2 bg-[#ebf0f5] border border-gray-300 text-sm focus:bg-white focus:outline-none focus:border-[#2185d0] transition-all resize-none"
+                                    placeholder="Fariintaada (Sharaxaad)..."
+                                />
                                 <button
                                     type="submit"
                                     disabled={forgotLoading}
-                                    className="w-full h-[60px] bg-gray-900 hover:bg-black text-white rounded-2xl font-bold transition-all shadow-xl shadow-gray-200 disabled:opacity-50"
+                                    className="w-full h-10 bg-gray-800 hover:bg-black text-white font-bold transition-all disabled:opacity-50 flex items-center justify-center"
                                 >
-                                    {forgotLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Dir Codsiga"}
+                                    {forgotLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Dir Codsiga"}
                                 </button>
                             </form>
                         )}

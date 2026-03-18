@@ -121,9 +121,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                 />
             )}
 
-            <div className={`fixed md:static inset-y-0 left-0 w-64 h-screen text-white z-50 transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-                }`}
-                style={{ background: 'linear-gradient(180deg, #22c55e 0%, #16a34a 60%, #15803d 100%)' }}>
+            <div className={`fixed md:static inset-y-0 left-0 w-64 h-screen text-slate-300 z-50 transition-transform duration-300 ease-in-out flex flex-col bg-[#1e293b] border-r border-slate-800 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+                }`}>
 
                 {/* Logo */}
                 <div className="flex items-center justify-between h-24 px-5 border-b border-white/10">
@@ -132,9 +131,9 @@ const Sidebar = ({ isOpen, onClose }) => {
                             <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
                                 <BookOpen className="h-4 w-4 text-white" />
                             </div>
-                            <h1 className="text-base sm:text-lg font-black text-white tracking-tight leading-none uppercase truncate">{mainTitle}</h1>
+                            <h1 className="text-lg sm:text-xl font-black text-white tracking-tight leading-none uppercase truncate">{mainTitle}</h1>
                         </div>
-                        <p className="text-[9px] text-white/80 font-black tracking-[0.2em] ml-10">SKILLS</p>
+                        <p className="text-[11px] text-white/80 font-black tracking-[0.2em] ml-10">SKILLS</p>
                     </div>
 
                     {/* Close button for mobile */}
@@ -147,8 +146,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Navigation */}
-                <div className="flex-1 overflow-y-auto py-6 px-3 custom-scrollbar">
-                    <p className="text-[10px] font-black text-white uppercase tracking-widest mb-4 px-2 opacity-60">Main Menu</p>
+                <div className="flex-1 overflow-y-auto py-6 custom-scrollbar">
+                    <p className="text-[12px] font-medium text-slate-400 uppercase tracking-widest mb-4 px-5">Main Menu</p>
                     <ul className="space-y-1.5">
                         {visibleItems.map((item, index) => {
                             const currentPath = location.pathname + location.search;
@@ -162,44 +161,40 @@ const Sidebar = ({ isOpen, onClose }) => {
                                     {item.submenu ? (
                                         <button
                                             onClick={() => toggleMenu(item.title)}
-                                            className={`flex items-center justify-between w-full gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${isActive || isExpanded
-                                                ? 'bg-white/20 text-white font-bold'
-                                                : 'text-white/70 hover:text-white hover:bg-white/10'
+                                            className={`flex items-center justify-between w-full gap-3 px-5 py-3 transition-all duration-300 ${isActive || isExpanded
+                                                ? 'bg-slate-800 text-white font-medium'
+                                                : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <span className={`${isActive || isExpanded ? 'text-white' : 'text-white/50'} transition-transform duration-300 ${isExpanded ? 'scale-110' : ''}`}>
+                                                <span className={`${isActive || isExpanded ? 'text-white' : 'text-slate-300'} transition-transform duration-300 ${isExpanded ? 'scale-110' : ''}`}>
                                                     {item.icon}
                                                 </span>
-                                                <span className="text-[13px] font-semibold tracking-wide">{item.title}</span>
+                                                <span className="text-[14px] font-medium tracking-wide">{item.title}</span>
                                             </div>
-                                            {isExpanded ? <ChevronDown className="h-3.5 w-3.5 text-white/50" /> : <ChevronRight className="h-3.5 w-3.5 text-white/50" />}
+                                            {isExpanded ? <ChevronDown className="h-4 w-4 text-slate-300" /> : <ChevronRight className="h-4 w-4 text-slate-300" />}
                                         </button>
                                     ) : (
-                                        <Link
-                                            to={item.path}
-                                            onClick={() => {
-                                                if (window.innerWidth < 768) onClose();
-                                            }}
-                                            className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${isActive
-                                                ? 'bg-white text-[#16a34a] shadow-lg font-black'
-                                                : 'text-white/70 hover:text-white hover:bg-white/10'
-                                                }`}
-                                        >
-                                            <span className={isActive ? 'text-[#16a34a]' : 'text-white/50'}>
-                                                {item.icon}
-                                            </span>
-                                            <span className="text-[13px] font-semibold tracking-wide">{item.title}</span>
-                                            {isActive && (
-                                                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse" />
-                                            )}
-                                        </Link>
-                                    )}
+                                            <Link
+                                                to={item.path}
+                                                onClick={() => {
+                                                    if (window.innerWidth < 768) onClose();
+                                                }}
+                                                className={`flex items-center gap-3 px-5 py-3 transition-all duration-300 ${isActive
+                                                    ? 'bg-blue-600 text-white font-medium border-l-4 border-blue-400'
+                                                    : 'text-slate-300 hover:text-white hover:bg-slate-800/50 border-l-4 border-transparent'
+                                                    }`}
+                                            >
+                                                <span className={isActive ? 'text-white' : 'text-slate-300'}>
+                                                    {item.icon}
+                                                </span>
+                                                <span className="text-[14px] font-medium tracking-wide">{item.title}</span>
+                                            </Link>)}
 
                                     {/* Render Submenu if present and expanded */}
                                     {item.submenu && (
-                                        <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0'}`}>
-                                            <ul className="overflow-hidden pl-4 ml-4 border-l border-white/10 space-y-1">
+                                        <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                                            <ul className="overflow-hidden pl-2 ml-7 border-l border-slate-700">
                                                 {item.submenu
                                                     .filter(sub => !sub.roles || sub.roles.includes(user?.role))
                                                     .map((sub, sidx) => {
@@ -211,13 +206,13 @@ const Sidebar = ({ isOpen, onClose }) => {
                                                                     onClick={() => {
                                                                         if (window.innerWidth < 768) onClose();
                                                                     }}
-                                                                    className={`flex items-center gap-3 px-4 py-2.5 text-xs rounded-xl transition-all duration-200 ${isSubActive
-                                                                        ? 'bg-white/20 text-white font-black'
-                                                                        : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                                                    className={`flex items-center gap-3 px-5 py-2.5 transition-all duration-200 ${isSubActive
+                                                                        ? 'text-blue-400 font-medium bg-slate-800/50'
+                                                                        : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
                                                                         }`}
                                                                 >
-                                                                    <span className={`${isSubActive ? 'text-white' : 'text-white/30'} scale-90`}>{sub.icon}</span>
-                                                                    <span className="tracking-tight">{sub.title}</span>
+                                                                    <span className={`${isSubActive ? 'text-blue-400' : 'text-slate-300'}`}>{sub.icon}</span>
+                                                                    <span className="tracking-wide text-[14px] font-medium">{sub.title}</span>
                                                                 </Link>
                                                             </li>
                                                         );
@@ -232,15 +227,15 @@ const Sidebar = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* User & Logout */}
-                <div className="p-4 bg-black/10">
-                    <div className="bg-white/10 hover:bg-white/15 transition-colors rounded-2xl p-4 mb-3 backdrop-blur-md border border-white/5 cursor-pointer group shadow-sm">
+                <div className="p-4 bg-slate-900 border-t border-slate-800">
+                    <div className="bg-slate-800 hover:bg-slate-700 transition-colors rounded-xl p-4 mb-3 border border-slate-700 cursor-pointer group">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-linear-to-tr from-white to-emerald-100 flex items-center justify-center text-[#16a34a] font-black text-sm shadow-md transform group-hover:scale-110 transition-transform">
+                            <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold text-sm transform group-hover:scale-110 transition-transform">
                                 {user?.name?.charAt(0)}
                             </div>
                             <div className="overflow-hidden">
-                                <p className="text-sm font-black text-white truncate tracking-wide">{user?.name}</p>
-                                <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest">{user?.role}</p>
+                                <p className="text-[14px] font-medium text-white truncate">{user?.name}</p>
+                                <p className="text-[11px] text-slate-400 uppercase tracking-widest mt-0.5">{user?.role}</p>
                             </div>
                         </div>
                     </div>
@@ -249,7 +244,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                             logout();
                             onClose && onClose();
                         }}
-                                className="flex items-center justify-center gap-3 w-full px-4 py-3 text-xs font-black text-white/50 uppercase tracking-[0.2em] rounded-xl hover:text-white hover:bg-red-500/80 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300"
+                                className="flex items-center justify-center gap-3 w-full px-4 py-3 text-sm font-medium text-slate-400 uppercase tracking-wider rounded-xl hover:text-white hover:bg-red-500/80 transition-all duration-300"
                     >
                         <LogOut className="h-4 w-4" />
                         Sign Out
