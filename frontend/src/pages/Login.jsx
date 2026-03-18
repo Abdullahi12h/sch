@@ -12,8 +12,12 @@ const Login = () => {
     });
 
     // Authentication Mode
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [role, setRole] = useState('student');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +29,7 @@ const Login = () => {
     const [forgotLoading, setForgotLoading] = useState(false);
     const [forgotSuccess, setForgotSuccess] = useState('');
 
-    const { login } = useAuth();
+    const { login, register } = useAuth();
     const navigate = useNavigate();
 
     const handleForgotSubmit = async (e) => {
@@ -58,13 +62,28 @@ const Login = () => {
         setError('');
         setIsLoading(true);
 
-        const result = await login(username, password);
+        if (isRegistering) {
+            if (password !== confirmPassword) {
+                setError('Password-yada isma laha!');
+                setIsLoading(false);
+                return;
+            }
 
-        if (result.success) {
-            navigate('/dashboard');
+            const result = await register(name, username, password, role);
+            if (result.success) {
+                navigate('/dashboard');
+            } else {
+                setError(result.message);
+                setIsLoading(false);
+            }
         } else {
-            setError(result.message);
-            setIsLoading(false);
+            const result = await login(username, password);
+            if (result.success) {
+                navigate('/dashboard');
+            } else {
+                setError(result.message);
+                setIsLoading(false);
+            }
         }
     };
 
@@ -90,12 +109,12 @@ const Login = () => {
                     </div>
 
                     {/* School Name */}
-                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 tracking-tight text-center uppercase relative z-10">
-                        {branding.schoolName}
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 tracking-tight text-center uppercase relative z-10 transition-all duration-300">
+                        {isRegistering ? 'Ku Biir Nidaamka' : branding.schoolName}
                     </h1>
 
                     <p className="text-gray-500 mb-8 text-center font-medium relative z-10">
-                        Welcome back! Please enter your details.
+                        {isRegistering ? 'Fadlan buuxi macluumaadka si aad u samaysato account.' : 'Welcome back! Please enter your details.'}
                     </p>
 
                     {/* Form Section */}
@@ -104,6 +123,38 @@ const Login = () => {
                             <div className="p-4 rounded-2xl bg-red-50 border border-red-100 text-sm text-red-600 text-center font-bold animate-shake">
                                 {error}
                             </div>
+                        )}
+
+                        {isRegistering && (
+                            <>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <User className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
+                                        placeholder="Magaca oo buuxa"
+                                    />
+                                </div>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <UserPlus className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                    </div>
+                                    <select
+                                        value={role}
+                                        onChange={(e) => setRole(e.target.value)}
+                                        className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold appearance-none"
+                                    >
+                                        <option value="student">Arday</option>
+                                        <option value="teacher">Macalin</option>
+                                        <option value="parent">Wali</option>
+                                    </select>
+                                </div>
+                            </>
                         )}
 
                         <div className="relative group">
@@ -116,7 +167,7 @@ const Login = () => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
-                                placeholder="Username"
+                                placeholder="Username ama Email"
                             />
                         </div>
 
@@ -134,14 +185,42 @@ const Login = () => {
                             />
                         </div>
 
-                        <div className="flex justify-end pt-1">
+                        {isRegistering && (
+                            <div className="relative group animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                </div>
+                                <input
+                                    type="password"
+                                    required
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="block w-full h-[60px] pl-12 pr-5 bg-gray-50 border border-transparent rounded-2xl text-base text-gray-900 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50/50 transition-all outline-none font-semibold placeholder:text-gray-400"
+                                    placeholder="Confirm Password"
+                                />
+                            </div>
+                        )}
+
+                        <div className="flex justify-between items-center pt-1">
                             <button
                                 type="button"
-                                onClick={() => setShowForgot(true)}
-                                className="text-sm font-bold text-gray-400 hover:text-blue-600 transition-all"
+                                onClick={() => {
+                                    setIsRegistering(!isRegistering);
+                                    setError('');
+                                }}
+                                className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4"
                             >
-                                Lost your password?
+                                {isRegistering ? 'Account miyaad leedahay? Login' : 'Account ma u baahan tahay? Register'}
                             </button>
+                            {!isRegistering && (
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForgot(true)}
+                                    className="text-sm font-bold text-gray-400 hover:text-blue-600 transition-all"
+                                >
+                                    Lost your password?
+                                </button>
+                            )}
                         </div>
 
                         <div className="pt-4">
@@ -154,7 +233,7 @@ const Login = () => {
                                     <Loader2 className="w-6 h-6 animate-spin" />
                                 ) : (
                                     <>
-                                        Sign In
+                                        {isRegistering ? 'Sign Up Now' : 'Sign In'}
                                         <LogIn className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}

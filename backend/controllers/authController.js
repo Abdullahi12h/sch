@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import Student from '../models/Student.js';
 import Teacher from '../models/Teacher.js';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'secret123', {
@@ -11,34 +12,62 @@ const generateToken = (id) => {
 
 export const authUser = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({ 
+                message: 'Database connection lost or pending. Please check if your IP is whitelisted in MongoDB Atlas and if your internet is working.' 
+            });
+        }
         const { username, password } = req.body;
 
-        const user = await User.findOne({ username });
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Please provide both username and password' });
+        }
 
-        if (user && (await user.matchPassword(password))) {
+        // Support lookup by either username or email (some old records use email field)
+        const user = await User.findOne({ 
+            $or: [
+                { username: username },
+                { email: username }
+            ]
+        });
+
+        if (user && user.password && (await user.matchPassword(password))) {
             let userData = {
                 _id: user._id,
                 name: user.name,
-                username: user.username,
+                username: user.username || user.email,
                 role: user.role,
                 token: generateToken(user._id),
             };
 
-            // If student, find student record
-            if (user.role === 'student') {
-                const student = await Student.findOne({
-                    email: { $regex: new RegExp(`^${user.username}$`, 'i') }
-                });
-                if (student) {
-                    userData.studentData = student;
-                }
-            }
+            // Enhanced logic to find linked records (using either username or email)
+            const searchIdentifier = user.username || user.email;
 
-            // If teacher, find teacher record
-            if (user.role === 'teacher') {
-                const teacher = await Teacher.findOne({ username: user.username });
-                if (teacher) {
-                    userData.teacherData = teacher;
+            if (searchIdentifier) {
+                // If student, find student record
+                if (user.role === 'student' || user.role === 'parent') {
+                    const student = await Student.findOne({
+                        $or: [
+                            { email: { $regex: new RegExp(`^${searchIdentifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } },
+                            { username: searchIdentifier }
+                        ]
+                    });
+                    if (student) {
+                        userData.studentData = student;
+                    }
+                }
+
+                // If teacher, find teacher record
+                if (user.role === 'teacher') {
+                    const teacher = await Teacher.findOne({
+                        $or: [
+                            { username: searchIdentifier },
+                            { email: searchIdentifier }
+                        ]
+                    });
+                    if (teacher) {
+                        userData.teacherData = teacher;
+                    }
                 }
             }
 
@@ -48,12 +77,21 @@ export const authUser = async (req, res) => {
         }
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error during login' });
+        res.status(500).json({ 
+            message: 'Server error during login', 
+            error: error.message,
+            stack: error.stack
+        });
     }
 };
 
 export const registerUser = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({ 
+                message: 'Database connection lost or pending. Please check if your IP is whitelisted in MongoDB Atlas and if your internet is working.' 
+            });
+        }
         const { name, username, password, role } = req.body;
 
         const userExists = await User.findOne({ username });
