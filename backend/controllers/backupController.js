@@ -31,7 +31,7 @@ export const exportData = async (req, res) => {
             subjects: await Subject.find(),
             teachers: await Teacher.find(),
             teacherAttendances: await TeacherAttendance.find(),
-            users: await User.find().select('-password'), // Exclude passwords for safety
+            users: await User.find(), // Include hashed passwords for full backup
             lessonLogs: await LessonLog.find()
         };
 
@@ -74,19 +74,23 @@ export const importData = async (req, res) => {
 
         for (const [key, Model] of Object.entries(models)) {
             if (data[key] && Array.isArray(data[key])) {
-                // For users, we might want to be careful not to overwrite current session or lose password info if not provided
-                // But generally, a full restore should replace everything.
-                // For safety, we can clear and insert, or use upsert. 
-                // Upsert is safer for incrementally adding but "backup/restore" usually implies full replacement.
+                // Special handling for User to ensure passwords exist
+                let dataToInsert = data[key];
                 
-                // Let's go with clearing and re-inserting for a true "restore" feeling, 
-                // but users should be handled carefully.
-                
-                await Model.deleteMany({});
-                if (data[key].length > 0) {
-                    await Model.insertMany(data[key]);
+                if (key === 'users') {
+                    dataToInsert = data[key].map(user => ({
+                        ...user,
+                        password: user.password || 'password123' // Default password for safety
+                    }));
                 }
-                summary[key] = data[key].length;
+
+                // Skip deletion if the count is zero to avoid total data loss
+                if (dataToInsert.length > 0) {
+                    await Model.deleteMany({});
+                    await Model.insertMany(dataToInsert);
+                }
+                
+                summary[key] = dataToInsert.length;
             }
         }
 

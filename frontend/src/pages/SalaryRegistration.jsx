@@ -25,6 +25,7 @@ const SalaryRegistration = () => {
     const [salaries, setSalaries] = useState([]);
     const [teachers, setTeachers] = useState([]);
     const [staff, setStaff] = useState([]);
+    const [hrPersonnel, setHrPersonnel] = useState([]);
     const [academicYears, setAcademicYears] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modal, setModal] = useState(null);
@@ -78,6 +79,7 @@ const SalaryRegistration = () => {
             ]);
             setTeachers(teachersRes.data);
             setStaff(staffRes.data.filter(u => u.role === 'cashier' || u.role === 'admin'));
+            setHrPersonnel(staffRes.data.filter(u => u.role === 'hr'));
             setAcademicYears(yearsRes.data);
         } catch (error) {
             console.error('Error fetching employees or years:', error);
@@ -328,6 +330,7 @@ const SalaryRegistration = () => {
                                     >
                                         <option value="Teacher">Teacher</option>
                                         <option value="Staff">Staff/Admin</option>
+                                        <option value="HR">HR</option>
                                     </select>
                                 </div>
                                 <div>
@@ -336,7 +339,8 @@ const SalaryRegistration = () => {
                                         value={form.employeeId}
                                         onChange={e => {
                                             const id = e.target.value;
-                                            const list = form.employeeType === 'Teacher' ? teachers : staff;
+                                            const list = form.employeeType === 'Teacher' ? teachers : 
+                                                         form.employeeType === 'HR' ? hrPersonnel : staff;
                                             const emp = list.find(x => String(x._id || x.id) === String(id));
                                             setForm({ 
                                                 ...form, 
@@ -350,7 +354,8 @@ const SalaryRegistration = () => {
                                         required
                                     >
                                         <option value="">-- Dooro --</option>
-                                        {(form.employeeType === 'Teacher' ? teachers : staff).map(x => (
+                                        {(form.employeeType === 'Teacher' ? teachers : 
+                                          form.employeeType === 'HR' ? hrPersonnel : staff).map(x => (
                                             <option key={x._id || x.id} value={x._id || x.id}>{x.name}</option>
                                         ))}
                                     </select>

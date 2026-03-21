@@ -251,7 +251,7 @@ const TeacherStats = ({ data = {}, onClockIn, onClockOut, actionLoading }) => {
 };
 
 const FinanceStats = ({ data = {} }) => (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard label="Revenue Guud" value={`$${data.totalCollected?.toLocaleString() || 0}`} sub="Fees Collected" icon={<Wallet />} color="bg-emerald-50 text-emerald-600" />
         <StatCard label="Outstanding" value={`$${data.totalPending?.toLocaleString() || 0}`} sub="Yet to Collect" icon={<Clock />} color="bg-amber-50 text-amber-600" />
         <StatCard label="Expenses" value={`$${data.totalExpenses?.toLocaleString() || 0}`} sub="Operational Costs" icon={<DollarSign />} color="bg-rose-50 text-rose-600" />
@@ -275,8 +275,13 @@ const EmployeeAttendanceStats = ({ teachersList = [], onClockIn, onClockOut, act
             const { data } = await axios.get(`/api/teacher-attendance/stats?academicYear=${selectedYear}&period=${period}&date=${date}`, authConfig);
             
             // Map the attendance records to our display format
-            const mapped = teachersList.map(teacher => {
-                const record = data.stats?.find(a => a.teacherId === teacher.id || a.teacherName === teacher.name || a.name === teacher.name);
+            const mapped = (teachersList || []).map(teacher => {
+                const teacherId = teacher.id || teacher._id;
+                const record = data.stats?.find(a => 
+                    a.teacherId === String(teacherId) || 
+                    a.teacherName === teacher.name || 
+                    a.name === teacher.name
+                );
                 return {
                     ...teacher,
                     checkIn: record?.checkIn || '-',
@@ -336,66 +341,65 @@ const EmployeeAttendanceStats = ({ teachersList = [], onClockIn, onClockOut, act
                 `}
             </style>
             <div className="printable-attendance space-y-6">
-                <div className="px-8 py-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between bg-white gap-4 rounded-4xl border border-gray-100 shadow-sm relative overflow-hidden group">
+                <div className="px-6 sm:px-10 py-8 border-b border-gray-100 flex flex-col xl:flex-row xl:items-center justify-between bg-white gap-6 rounded-4xl border border-gray-100 shadow-sm relative overflow-hidden group">
                     <div className="absolute top-0 left-0 w-1.5 h-full bg-[#2563EB]" />
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
+                    <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-1">
                             <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Employee Attendance Matrix</h3>
-                            <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-[8px] font-black uppercase tracking-tighter border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all">Teacher Mgmt</span>
+                            <span className="w-fit px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-[8px] font-black uppercase tracking-tighter border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all">Teacher Mgmt</span>
                         </div>
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Real-time presence tracking & synchronization</p>
                         {config && (
-                            <div className="flex items-center gap-3 mt-2 no-print">
+                            <div className="flex flex-wrap items-center gap-2 mt-3 no-print">
                                 <span className="flex items-center gap-1 text-[8px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 uppercase tracking-tighter">
-                                    <Clock className="w-2.5 h-2.5" /> Check-In: {config.startTime}
+                                    <Clock className="w-2.5 h-2.5" /> IN: {config.startTime}
                                 </span>
                                 <span className="flex items-center gap-1 text-[8px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100 uppercase tracking-tighter">
-                                    <Settings className="w-2.5 h-2.5" /> Late: {config.lateTime}
-                                </span>
-                                <span className="flex items-center gap-1 text-[8px] font-black text-pink-600 bg-pink-50 px-2 py-0.5 rounded-lg border border-pink-100 uppercase tracking-tighter">
-                                    <Clock className="w-2.5 h-2.5" /> Check-Out: {config.checkOutLimit}
+                                    <Settings className="w-2.5 h-2.5" /> LATE: {config.lateTime}
                                 </span>
                                 <span className="flex items-center gap-1 text-[8px] font-black text-red-600 bg-red-50 px-2 py-0.5 rounded-lg border border-red-100 uppercase tracking-tighter">
-                                    <XCircle className="w-2.5 h-2.5" /> Absent: {config.absentTime}
+                                    <XCircle className="w-2.5 h-2.5" /> ABSENT: {config.absentTime}
                                 </span>
                             </div>
                         )}
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-4 no-print">
-                        <div className="flex items-center gap-4 px-4 py-2 bg-gray-50/50 rounded-2xl border border-gray-100">
-                             <div className="flex flex-col"><span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest">Present</span><span className="text-sm font-black text-slate-800 tabular-nums">{attendanceData.stats?.present || 0}</span></div>
-                             <div className="w-px h-6 bg-gray-200" />
-                             <div className="flex flex-col"><span className="text-[8px] font-black text-amber-500 uppercase tracking-widest">Late</span><span className="text-sm font-black text-slate-800 tabular-nums">{attendanceData.stats?.late || 0}</span></div>
-                             <div className="w-px h-6 bg-gray-200" />
-                             <div className="flex flex-col"><span className="text-[8px] font-black text-rose-500 uppercase tracking-widest">Absent</span><span className="text-sm font-black text-slate-800 tabular-nums">{attendanceData.stats?.absent || 0}</span></div>
+                    <div className="flex flex-wrap items-center gap-4 no-print sm:justify-start lg:justify-end">
+                        <div className="flex items-center gap-3 px-3 py-2 bg-gray-50/50 rounded-2xl border border-gray-100">
+                             <div className="flex flex-col items-center"><span className="text-[7px] font-black text-emerald-600 uppercase tracking-widest leading-none">P</span><span className="text-xs font-black text-slate-800 tabular-nums leading-none mt-1">{attendanceData.stats?.present || 0}</span></div>
+                             <div className="w-px h-5 bg-gray-200" />
+                             <div className="flex flex-col items-center"><span className="text-[7px] font-black text-amber-500 uppercase tracking-widest leading-none">L</span><span className="text-xs font-black text-slate-800 tabular-nums leading-none mt-1">{attendanceData.stats?.late || 0}</span></div>
+                             <div className="w-px h-5 bg-gray-200" />
+                             <div className="flex flex-col items-center"><span className="text-[7px] font-black text-rose-500 uppercase tracking-widest leading-none">A</span><span className="text-xs font-black text-slate-800 tabular-nums leading-none mt-1">{attendanceData.stats?.absent || 0}</span></div>
                         </div>
 
-                        <div className="flex bg-white rounded-xl border border-gray-100 p-1 shadow-xs">
+                        <div className="flex bg-white rounded-xl border border-gray-100 p-1 shadow-xs overflow-x-auto">
                             {['daily', 'weekly', 'monthly', 'yearly'].map((p) => (
                                 <button
                                     key={p}
                                     onClick={() => setPeriod(p)}
-                                    className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${period === p ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                                    className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${period === p ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}
                                 >
-                                    {p === 'yearly' ? 'Dhamaan' : p === 'monthly' ? 'Bile' : p === 'weekly' ? 'Week' : 'Daily'}
+                                    {p === 'yearly' ? 'All' : p === 'monthly' ? 'Bile' : p === 'weekly' ? 'Week' : 'Daily'}
                                 </button>
                             ))}
                         </div>
                         
-                        <input
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className="bg-white border border-gray-100 rounded-xl px-3 py-1.5 text-[9px] font-black text-gray-600 outline-none shadow-xs hover:border-blue-200 transition-all uppercase"
-                        />
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                className="flex-1 sm:flex-none bg-white border border-gray-100 rounded-xl px-3 py-1.5 text-[9px] font-black text-gray-600 outline-none shadow-xs hover:border-blue-200 transition-all uppercase"
+                            />
 
-                        <button 
-                            onClick={handlePrint}
-                            className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-100 rounded-xl text-[9px] font-black uppercase text-gray-600 hover:bg-gray-50 transition-all shadow-xs"
-                        >
-                            <Printer className="w-3 h-3" /> Print
-                        </button>
+                            <button 
+                                onClick={handlePrint}
+                                className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 text-white rounded-xl text-[9px] font-black uppercase hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+                            >
+                                <Printer className="w-3.5 h-3.5" /> Print
+                            </button>
+                        </div>
                     </div>
                 </div>
 

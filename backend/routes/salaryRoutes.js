@@ -6,14 +6,14 @@ import {
     updateSalary,
     deleteSalary
 } from '../controllers/salaryController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { protect, adminOrHr } from '../middleware/authMiddleware.js';
 
 router.route('/')
-    .get(protect, adminOnly, getSalaries)
-    .post(protect, adminOnly, createSalary);
+    .get(protect, adminOrHr, getSalaries)
+    .post(protect, adminOrHr, createSalary);
 
 router.route('/:id')
-    .put(protect, adminOnly, updateSalary)
-    .delete(protect, adminOnly, deleteSalary);
+    .put(protect, adminOrHr, updateSalary)
+    .delete(protect, adminOrHr, deleteSalary);
 
 export default router;

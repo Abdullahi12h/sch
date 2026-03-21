@@ -10,21 +10,21 @@ import {
     bulkToggleStudentResultsLock,
     clearStudentCredentials
 } from '../controllers/studentController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { protect, adminOnly, adminOrHr } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Static routes
 router.get('/', protect, getStudents);
-router.post('/', protect, addStudent);
-router.post('/import', protect, adminOnly, importStudents);
-router.post('/generate-credentials', protect, adminOnly, generateStudentCredentials);
-router.post('/clear-credentials', protect, adminOnly, clearStudentCredentials);
+router.post('/', protect, adminOrHr, addStudent);
+router.post('/import', protect, adminOrHr, importStudents);
+router.post('/generate-credentials', protect, adminOrHr, generateStudentCredentials);
+router.post('/clear-credentials', protect, adminOrHr, clearStudentCredentials);
 router.post('/bulk-lock', protect, adminOnly, bulkToggleStudentResultsLock);
 
 // Individual student routes
 router.put('/:id/toggle-lock', protect, adminOnly, toggleStudentResultsLock);
-router.put('/:id', protect, updateStudent);
-router.delete('/:id', protect, deleteStudent);
+router.put('/:id', protect, adminOrHr, updateStudent);
+router.delete('/:id', protect, adminOrHr, deleteStudent);
 
 export default router;

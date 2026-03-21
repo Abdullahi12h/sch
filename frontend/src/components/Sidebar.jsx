@@ -20,7 +20,9 @@ import {
     X,
     MessageSquare,
     Palette,
-    Image as ImageIcon
+    Image as ImageIcon,
+    ClipboardCheck,
+    Package
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -63,6 +65,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 { title: 'Employees', path: '/dashboard/teachers', icon: <Users className="h-4 w-4" />, roles: ['admin'] },
                 { title: 'Staff', path: '/dashboard/staff', icon: <UserCheck className="h-4 w-4" />, roles: ['admin'] },
                 { title: 'Admission', path: '/dashboard/admissions', icon: <FolderOpen className="h-4 w-4" />, roles: ['admin'] },
+                { title: 'Inventory', path: '/dashboard/inventory', icon: <Package className="h-4 w-4" />, roles: ['admin'] },
             ]
         },
         {
@@ -101,6 +104,13 @@ const Sidebar = ({ isOpen, onClose }) => {
         { title: 'Reset Requests', icon: <MessageSquare className="h-5 w-5" />, path: '/dashboard/reset-requests', roles: ['admin'] },
         { title: 'Dashboard Style', icon: <Palette className="h-5 w-5" />, path: '/dashboard/dashboard-settings', roles: ['admin'] },
         { title: 'Logo Branding', icon: <ImageIcon className="h-5 w-5" />, path: '/dashboard/branding', roles: ['admin'] },
+        {
+            title: 'HR MANAGEMENT', icon: <UserCheck className="h-5 w-5" />, roles: ['admin', 'hr'],
+            submenu: [
+                { title: 'HR Attendance', path: '/dashboard/hr-attendance', icon: <Clock className="h-4 w-4" />, roles: ['admin', 'hr'] },
+            ]
+        },
+        { title: 'Cleaning Schedule', path: '/dashboard/cleaning', icon: <ClipboardCheck className="h-5 w-5" />, roles: ['admin', 'hr'] },
         { title: 'Settings', icon: <Settings className="h-5 w-5" />, path: '/dashboard/settings', roles: ['admin'] },
     ];
 

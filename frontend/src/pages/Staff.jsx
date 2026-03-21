@@ -200,13 +200,22 @@ const Staff = () => {
                 },
             };
 
-            await axios.put('/api/auth/users', {
+            const payload = {
                 username,
                 password,
                 name: name || selectedEntity.name,
                 role: role,
-                salary: salary || 0
-            }, config);
+                salary: salary || 0,
+                _id: selectedEntity?._id // Pass ID to find record reliably
+            };
+
+            if (selectedEntity?.type === 'new') {
+                // Creation
+                await axios.post('/api/auth/register', payload, config);
+            } else {
+                // Update
+                await axios.put('/api/auth/users', payload, config);
+            }
 
             setSuccess('Data saved successfully!');
             fetchData();
@@ -324,6 +333,14 @@ const Staff = () => {
                     {activeTab === 'system' && (
                         <div className="flex gap-2">
                             <button
+                                onClick={() => clearAllUsersByRole('hr')}
+                                disabled={clearing}
+                                className="flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 rounded-xl text-sm font-semibold hover:bg-amber-200 transition-all shadow-sm disabled:opacity-50"
+                            >
+                                {clearing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                Delete All HR
+                            </button>
+                            <button
                                 onClick={() => clearAllUsersByRole('cashier')}
                                 disabled={clearing}
                                 className="flex items-center gap-2 px-4 py-2 bg-rose-100 text-rose-700 rounded-xl text-sm font-semibold hover:bg-rose-200 transition-all shadow-sm disabled:opacity-50"
@@ -415,6 +432,7 @@ const Staff = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs shadow-sm shadow-gray-200 ${userRecord?.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                                                    userRecord?.role === 'hr' ? 'bg-amber-100 text-amber-700' :
                                                     userRecord?.role === 'cashier' ? 'bg-emerald-100 text-emerald-700' :
                                                         userRecord?.role === 'teacher' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
                                                     }`}>
@@ -468,6 +486,7 @@ const Staff = () => {
                                         <td className="px-6 py-4">
                                             {userRecord ? (
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${userRecord.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                                    userRecord.role === 'hr' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                                                     userRecord.role === 'cashier' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
                                                         userRecord.role === 'teacher' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                                                             'bg-gray-50 text-gray-700 border-gray-100'
@@ -567,6 +586,7 @@ const Staff = () => {
                                             className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-gray-700 focus:bg-white focus:border-blue-500 transition-all outline-none cursor-pointer"
                                         >
                                             <option value="cashier">Cashier</option>
+                                            <option value="hr">HR (Human Resources)</option>
                                             <option value="admin">Administrator</option>
                                             <option value="teacher">Teacher</option>
                                         </select>

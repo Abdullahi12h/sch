@@ -13,8 +13,8 @@ const generateToken = (id) => {
 export const authUser = async (req, res) => {
     try {
         if (mongoose.connection.readyState !== 1) {
-            return res.status(503).json({ 
-                message: 'Database connection lost or pending. Please check if your IP is whitelisted in MongoDB Atlas and if your internet is working.' 
+            return res.status(503).json({
+                message: 'Database connection lost or pending. Please check if your IP is whitelisted in MongoDB Atlas and if your internet is working.'
             });
         }
         const { username, password } = req.body;
@@ -24,7 +24,7 @@ export const authUser = async (req, res) => {
         }
 
         // Support lookup by either username or email (some old records use email field)
-        const user = await User.findOne({ 
+        const user = await User.findOne({
             $or: [
                 { username: username },
                 { email: username }
@@ -77,8 +77,8 @@ export const authUser = async (req, res) => {
         }
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ 
-            message: 'Server error during login', 
+        res.status(500).json({
+            message: 'Server error during login',
             error: error.message,
             stack: error.stack
         });
@@ -88,13 +88,18 @@ export const authUser = async (req, res) => {
 export const registerUser = async (req, res) => {
     try {
         if (mongoose.connection.readyState !== 1) {
-            return res.status(503).json({ 
-                message: 'Database connection lost or pending. Please check if your IP is whitelisted in MongoDB Atlas and if your internet is working.' 
+            return res.status(503).json({
+                message: 'Database connection lost or pending. Please check if your IP is whitelisted in MongoDB Atlas and if your internet is working.'
             });
         }
-        const { name, username, password, role } = req.body;
+        const { name, username, password, role, salary } = req.body;
 
-        const userExists = await User.findOne({ username });
+        const userExists = await User.findOne({
+            $or: [
+                { username: username },
+                { email: username }
+            ]
+        });
 
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
@@ -104,7 +109,9 @@ export const registerUser = async (req, res) => {
             name,
             username,
             password,
-            role
+            rawPassword: password, // Store raw password as well
+            role,
+            salary: salary || 0
         });
 
         if (user) {
@@ -113,14 +120,20 @@ export const registerUser = async (req, res) => {
                 name: user.name,
                 username: user.username,
                 role: user.role,
+                salary: user.salary,
                 token: generateToken(user._id),
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
         }
     } catch (error) {
-        console.error('Register error:', error);
-        res.status(500).json({ message: 'Server error during registration' });
+        console.error('Register error details:', error);
+        res.status(500).json({
+            message: 'Server error during registration',
+            error: error.message,
+            stack: error.stack,
+            errors: error.errors // MongoDB validation errors often are here
+        });
     }
 };
 
@@ -176,42 +189,77 @@ export const getUsers = async (req, res) => {
 
 export const updateUserCredentials = async (req, res) => {
     try {
-        const { username, newPassword, newUsername, name } = req.body;
-        const user = await User.findOne({ username });
+        const { username, id, _id, newPassword, password, newUsername, name, role, salary } = req.body;
+
+        // Find user by ID first if provided, else by username/email
+        const userId = id || _id;
+        let query = {};
+        if (userId) {
+            query = { _id: userId };
+        } else {
+            query = {
+                $or: [
+                    { username: username },
+                    { email: username }
+                ]
+            };
+        }
+
+        const user = await User.findOne(query);
 
         if (user) {
             if (name) user.name = name;
             if (newUsername) user.username = newUsername;
-            if (newPassword) user.password = newPassword;
+
+            // Handle both newPassword and password from different frontend versions
+            const updatedPassword = newPassword || password;
+            if (updatedPassword) {
+                user.password = updatedPassword;
+                // Save raw password if it exists on the model
+                if (user.rawPassword !== undefined) {
+                    user.rawPassword = updatedPassword;
+                }
+            }
+
+            if (role) user.role = role;
+            if (salary !== undefined) user.salary = salary;
 
             const updatedUser = await user.save();
             res.json({
                 _id: updatedUser._id,
                 name: updatedUser.name,
-                username: updatedUser.username,
+                username: updatedUser.username || updatedUser.email,
                 role: updatedUser.role,
+                salary: updatedUser.salary,
+                rawPassword: updatedUser.rawPassword
             });
         } else {
-            res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: `User '${username}' not found` });
         }
     } catch (error) {
         console.error('Update user error:', error);
-        res.status(500).json({ message: 'Server error updating user' });
+        res.status(500).json({ message: 'Server error updating user', error: error.message });
     }
 };
 
 export const deleteUser = async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.params.username });
+        const user = await User.findOne({
+            $or: [
+                { username: req.params.username },
+                { email: req.params.username }
+            ]
+        });
+
         if (user) {
             await user.deleteOne();
             res.json({ message: 'User removed' });
         } else {
-            res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: `User '${req.params.username}' not found` });
         }
     } catch (error) {
         console.error('Delete user error:', error);
-        res.status(500).json({ message: 'Server error deleting user' });
+        res.status(500).json({ message: 'Server error deleting user', error: error.message });
     }
 };
 

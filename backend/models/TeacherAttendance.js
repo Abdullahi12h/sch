@@ -2,16 +2,15 @@ import mongoose from 'mongoose';
 
 const teacherAttendanceSchema = mongoose.Schema({
     teacherId: {
-        type: Number,
-        required: true,
-        ref: 'Teacher'
+        type: String,
+        required: true
     },
     teacherName: {
         type: String,
         required: true
     },
     date: {
-        type: String, // 'YYYY-MM-DD'
+        type: String,
         required: true
     },
     academicYear: {
@@ -21,7 +20,7 @@ const teacherAttendanceSchema = mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ['P', 'A', 'L'], // Present, Absent, Late
+        enum: ['P', 'A', 'L'],
         default: 'P'
     },
     checkIn: {
@@ -30,25 +29,31 @@ const teacherAttendanceSchema = mongoose.Schema({
     checkOut: {
         type: Date
     },
-    excuseReason: {
+    totalWork: {
         type: String,
-        default: ''
+        default: '-'
+    },
+    reason: {
+        type: String,
+        default: '-'
+    },
+    isExcused: {
+        type: Boolean,
+        default: false
+    },
+    excuseReason: {
+        type: String
     },
     excuseStatus: {
         type: String,
-        enum: ['None', 'Pending', 'Approved', 'Rejected'],
-        default: 'None'
-    },
-    excuseImage: {
-        type: String, // URL/Path to proof image
-        default: ''
+        default: 'pending'
     }
 }, {
     timestamps: true
 });
 
-// Ensure a teacher can only have one attendance for a specific date
-teacherAttendanceSchema.index({ teacherId: 1, date: 1 }, { unique: true });
+// Remove unique constraint temporarily to diagnose 500 errors
+teacherAttendanceSchema.index({ teacherId: 1, date: 1 });
 
 const TeacherAttendance = mongoose.model('TeacherAttendance', teacherAttendanceSchema);
 

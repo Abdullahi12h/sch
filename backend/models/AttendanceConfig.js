@@ -30,6 +30,14 @@ const attendanceConfigSchema = mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    cleaningIn: {
+        type: String,
+        default: '07:30'
+    },
+    cleaningOut: {
+        type: String,
+        default: '16:00'
     }
 }, {
     timestamps: true

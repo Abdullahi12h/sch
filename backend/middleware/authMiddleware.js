@@ -46,3 +46,10 @@ export const adminOrTeacher = (req, res, next) => {
         res.status(403).json({ message: 'Not authorized as an admin or teacher' });
     }
 };
+export const adminOrHr = (req, res, next) => {
+    if (req.user && (req.user.role === 'admin' || req.user.role === 'hr')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Not authorized as an admin or HR' });
+    }
+};

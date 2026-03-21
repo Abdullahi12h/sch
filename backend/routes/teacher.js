@@ -1,18 +1,18 @@
 import express from 'express';
 import { getTeachers, addTeacher, updateTeacher, deleteTeacher, generateTeacherCredentials, clearTeacherCredentials } from '../controllers/teacherController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect, adminOrHr } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.route('/')
-    .get(protect, getTeachers)
-    .post(protect, addTeacher);
+    .get(protect, adminOrHr, getTeachers)
+    .post(protect, adminOrHr, addTeacher);
 
 router.route('/:id')
-    .put(protect, updateTeacher)
-    .delete(protect, deleteTeacher);
+    .put(protect, adminOrHr, updateTeacher)
+    .delete(protect, adminOrHr, deleteTeacher);
 
-router.post('/generate-credentials', protect, generateTeacherCredentials);
-router.post('/clear-credentials', protect, clearTeacherCredentials);
+router.post('/generate-credentials', protect, adminOrHr, generateTeacherCredentials);
+router.post('/clear-credentials', protect, adminOrHr, clearTeacherCredentials);
 
 export default router;

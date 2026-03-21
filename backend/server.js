@@ -21,6 +21,9 @@ import resetRequestRoutes from './routes/resetRequest.js';
 import expenseRoutes from './routes/expense.js';
 import lessonLogRoutes from './routes/lessonLog.js';
 import salaryRoutes from './routes/salaryRoutes.js';
+import cleaningRoutes from './routes/cleaning.js';
+import assetRoutes from './routes/assetRoutes.js';
+import assetCategoryRoutes from './routes/assetCategoryRoutes.js';
 import { bulkToggleStudentResultsLock } from './controllers/studentController.js';
 import { protect, adminOnly } from './middleware/authMiddleware.js';
 
@@ -62,6 +65,9 @@ app.use('/api/backup', backupRoutes);
 app.use('/api/reset-requests', resetRequestRoutes);
 app.use('/api/lesson-logs', lessonLogRoutes);
 app.use('/api/salaries', salaryRoutes);
+app.use('/api/cleaning', cleaningRoutes);
+app.use('/api/assets', assetRoutes);
+app.use('/api/asset-categories', assetCategoryRoutes);
 
 // Direct test route
 app.post('/api/direct-bulk-lock', protect, adminOnly, bulkToggleStudentResultsLock);

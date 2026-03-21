@@ -30,6 +30,9 @@ import PasswordRequests from './pages/PasswordRequests';
 import DashboardSettings from './pages/DashboardSettings';
 import BrandingSettings from './pages/BrandingSettings';
 import SalaryRegistration from './pages/SalaryRegistration';
+import CleaningChecklist from './pages/CleaningChecklist';
+import Inventory from './pages/Inventory';
+import HRAttendance from './pages/HRAttendance';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -89,6 +92,9 @@ function App() {
               <Route path="my-fee" element={<MyFee />} />
               <Route path="settings" element={<Settings />} />
               <Route path="staff" element={<Staff />} />
+              <Route path="cleaning" element={<CleaningChecklist />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="hr-attendance" element={<HRAttendance />} />
               <Route path="reset-requests" element={<PasswordRequests />} />
               <Route path="dashboard-settings" element={<DashboardSettings />} />
               <Route path="branding" element={<BrandingSettings />} />
